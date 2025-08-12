@@ -10,6 +10,11 @@ const ComponentLayout = () => {
   const handleGenerate = async () => {
     setLoading(true);
     try {
+      const token = localStorage.getItem('token')
+      if(!token){
+        setLoading(false);
+        return
+      }
       const response = await fetch(
         'https://router.huggingface.co/hf-inference/models/Falconsai/text_summarization',
         {

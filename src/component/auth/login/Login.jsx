@@ -1,4 +1,3 @@
-
 import axios from 'axios';
 import  { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom'; 
@@ -29,6 +28,7 @@ const navigate = useNavigate();
     try {
       const response = await axios.post('http://localhost:3001/api/auth/login',{email,password})
       console.log("login response",response)
+      localStorage.setItem('token',response.data.token)
       navigate("/home")
       
     } catch (error) {
