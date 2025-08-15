@@ -1,6 +1,9 @@
-import axios from 'axios';
 import  { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom'; 
+import { Base_Url } from '../../Api/BaseUrl';
+import { Login_Middle_Point } from '../../Api/MiddlePoint';
+import { Login_End_Point } from '../../Api/EndPoint';
+import { fetchData } from '../../Api/axios';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -26,10 +29,23 @@ const navigate = useNavigate();
     }
 
     try {
-      const response = await axios.post('http://localhost:3001/api/auth/login',{email,password})
+
+      const url = Base_Url + Login_Middle_Point + Login_End_Point;
+      const method ="POST";
+      const data ={email,password}
+      const response = await fetchData(url,method,data)
       console.log("login response",response)
-      localStorage.setItem('token',response.data.token)
-      navigate("/home")
+     if(response.status === 200 || response.status === 201 ){
+      console.log("response data",response.data)
+      localStorage.setItem('token', response.data.token)
+      navigate("/home");
+    }else{
+alert("error",response.error)
+    }
+      // const response = await axios.post('http://localhost:3001/api/auth/login',{email,password})
+      // console.log("login response",response)
+      // localStorage.setItem('token',response.data.token)
+      // navigate("/home")
       
     } catch (error) {
       console.log(error)

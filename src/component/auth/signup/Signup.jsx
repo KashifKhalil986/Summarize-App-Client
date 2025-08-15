@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios'
+import { Base_Url } from '../../Api/BaseUrl';
+import { SignUp_Middle_Point } from '../../Api/MiddlePoint';
+import { Sign_Up_End_Point } from '../../Api/EndPoint';
+import { fetchData } from '../../Api/axios';
 const Signup = () => {
     const [formData, setFormData] = useState({
         name:'',
@@ -36,10 +39,20 @@ const navigate = useNavigate();
         }
   
         try {
-            const response = await axios.post('http://localhost:3001/api/auth/register',data);
-            console.log("response",response);
+            const url =Base_Url +SignUp_Middle_Point +Sign_Up_End_Point;
+            const method = "POST";
+            const response = await fetchData(url,method,data)
+            console.log("signup response",response)
+             if(response.status === 200 || response.status === 201 ){
             setSuccess("SignUp successfully")
             navigate('/')
+             }else{
+alert("error",response.error)
+    }
+            // const response = await axios.post('http://localhost:3001/api/auth/register',data);
+            // console.log("response",response);
+            // setSuccess("SignUp successfully")
+            // navigate('/')
         } catch (error) {
             console.log(error);
             setError("SignUp fails")

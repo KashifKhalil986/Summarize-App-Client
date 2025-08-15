@@ -1,6 +1,9 @@
-import { useState } from 'react';
+import {  useEffect, useState } from 'react';
 import Navbar from '../../component/Navbar/Navbar';
-
+import { Base_Url } from '../../component/Api/BaseUrl';
+import { Change_Password_Middle_Point } from '../../component/Api/MiddlePoint';
+import { Change_Password_End_Point } from '../../component/Api/EndPoint';
+import { fetchData } from '../../component/Api/axios';
 const Profile = () => {
   const [formData, setFormData] = useState({
     currentPassword: '',
@@ -14,17 +17,41 @@ const Profile = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
+  try {
     if (formData.newPassword !== formData.confirmNewPassword) {
-      setMessage("Password and confirm password should be same");
+      setMessage("Password and confirm password should be the same");
       return;
     }
 
+    const Url = Base_Url + Change_Password_Middle_Point + Change_Password_End_Point;
+    const method = "PUT";
+    const data = {
+      currentPassword: formData.currentPassword,
+      newPassword: formData.newPassword,
+      confirmNewPassword: formData.confirmNewPassword
+    };
+
+    const response = await fetchData(Url, method, data);
+
+    if (!response || response.status !== 200) {
+      setMessage(response?.data?.error || "Failed to update password");
+      return;
+    }
 
     setMessage("Password updated successfully");
-  };
+  } catch (error) {
+    console.error("Error while changing password:", error);
+    setMessage("Something went wrong while updating password. Please try again.");
+  }
+};
+
+useEffect(()=>{
+  
+})
+
 
   return (
     <>

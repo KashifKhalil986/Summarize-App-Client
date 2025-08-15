@@ -39,12 +39,12 @@ const Navbar = () => {
 
             <div className="hidden md:flex items-center space-x-4">
         <Link to="/profile" className="mx-2">
-  <FontAwesomeIcon icon={faUser} className="text-gray-600 hover:text-blue-600 text-2xl cursor-pointer" />
+  <FontAwesomeIcon icon={faUser} className="text-blue-600 text-2xl cursor-pointer" />
 </Link>
 
               <button
                 onClick={handleLogout}
-                className="bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-600"
+                className="bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-600 cursor-pointer"
               >
                 Logout
               </button>
