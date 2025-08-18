@@ -4,6 +4,7 @@ import { Base_Url } from '../../Api/BaseUrl';
 import { SignUp_Middle_Point } from '../../Api/MiddlePoint';
 import { Sign_Up_End_Point } from '../../Api/EndPoint';
 import { fetchData } from '../../Api/axios';
+import { toast } from 'react-toastify';
 const Signup = () => {
     const [formData, setFormData] = useState({
         name:'',
@@ -34,7 +35,8 @@ const navigate = useNavigate();
         }
         
         if (password !== confirmPassword) {
-            setError("Passwords do not match");
+            // setError("Passwords do not match");
+            toast.error("Password and confirm password should be the same");
             return;
         }
   
@@ -44,10 +46,12 @@ const navigate = useNavigate();
             const response = await fetchData(url,method,data)
             console.log("signup response",response)
              if(response.status === 200 || response.status === 201 ){
-            setSuccess("SignUp successfully")
+            // setSuccess("SignUp successfully")
+            toast.success("User Register Successfully");
             navigate('/')
              }else{
-alert("error",response.error)
+// alert("error",response.error)
+toast.error(response.error || "User Register Failed");
     }
             // const response = await axios.post('http://localhost:3001/api/auth/register',data);
             // console.log("response",response);
