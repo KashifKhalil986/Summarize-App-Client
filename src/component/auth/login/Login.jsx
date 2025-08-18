@@ -1,18 +1,18 @@
-import  { useState } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom'; 
 import { Base_Url } from '../../Api/BaseUrl';
 import { Login_Middle_Point } from '../../Api/MiddlePoint';
 import { Login_End_Point } from '../../Api/EndPoint';
 import { fetchData } from '../../Api/axios';
+import { toast } from "react-toastify";   
 
 const Login = () => {
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
-const navigate = useNavigate();
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -20,45 +20,39 @@ const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError('');
-    setSuccess('');
- const {email,password}=formData;
-    if (!formData.email || !formData.password) {
-      setError("Please enter both email and password");
+    const { email, password } = formData;
+
+    if (!email || !password) {
+      toast.error("Please enter both email and password");
       return;
     }
 
     try {
-
       const url = Base_Url + Login_Middle_Point + Login_End_Point;
-      const method ="POST";
-      const data ={email,password}
-      const response = await fetchData(url,method,data)
-      console.log("login response",response)
-     if(response.status === 200 || response.status === 201 ){
-      console.log("response data",response.data)
-      localStorage.setItem('token', response.data.token)
-      navigate("/home");
-    }else{
-alert("error",response.error)
-    }
-      // const response = await axios.post('http://localhost:3001/api/auth/login',{email,password})
-      // console.log("login response",response)
-      // localStorage.setItem('token',response.data.token)
-      // navigate("/home")
-      
+      const method = "POST";
+      const data = { email, password };
+      const response = await fetchData(url, method, data);
+
+      console.log("login response", response);
+
+      if (response.status === 200 || response.status === 201) {
+        console.log("response data", response.data);
+        localStorage.setItem('token', response.data.token);
+
+        toast.success("Login Successful! Redirecting...");
+        navigate("/home");
+      } else {
+        toast.error("Login failed. Please check credentials.");
+      }
     } catch (error) {
-      console.log(error)
-      setError("Login Fails")
+      console.log(error);
+      toast.error("Something went wrong. Try again!");
     }
-  }
+  };
 
   return (
     <div className="max-w-md mx-auto mt-10 p-6 border rounded shadow">
       <h2 className="text-2xl font-bold mb-4">Login</h2>
-
-      {error && <p className="text-red-500 mb-3">{error}</p>}
-      {success && <p className="text-green-500 mb-3">{success}</p>}
 
       <form onSubmit={handleLogin} className="space-y-4">
         <input
@@ -100,4 +94,3 @@ alert("error",response.error)
 };
 
 export default Login;
-
