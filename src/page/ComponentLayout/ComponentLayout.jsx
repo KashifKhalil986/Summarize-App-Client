@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Navbar from '../../component/Navbar/Navbar';
-
+import { Base_Url } from "../../component/Api/BaseUrl";
+import { Summary_Middle_Point } from "../../component/Api/MiddlePoint";
+import { Summary_Post_End_Point } from "../../component/Api/EndPoint";
+import { fetchData } from '../../component/Api/axios';
 const ComponentLayout = () => {
   const [input, setInput] = useState('');
   const [output, setOutput] = useState('');
@@ -11,6 +14,7 @@ const ComponentLayout = () => {
     setLoading(true);
     try {
       const token = localStorage.getItem('token')
+       
       if(!token){
         setLoading(false);
         return
@@ -30,13 +34,23 @@ const ComponentLayout = () => {
       );
 
       const data = await response.json();
+      let summarized ="";
       if (Array.isArray(data) && data[0]?.summary_text) {
-        setOutput(data[0].summary_text);
+         summarized=data[0].summary_text;
+        setOutput(summarized)
       } else if (data?.error) {
         setOutput("Model is loading or error occurred: " + data.error);
       } else {
         setOutput("Unexpected response.");
       }
+  const url = Base_Url + Summary_Middle_Point + Summary_Post_End_Point;
+     const method = "POST"
+
+    const Summary_Data = { originalText: input, summarizedText: summarized };
+     const summaryResponse = await fetchData(url,method,Summary_Data)
+     console.log("summary response",summaryResponse)
+    
+
     } catch (error) {
       console.error(error);
       setOutput("An error occurred while summarizing.");
@@ -67,26 +81,28 @@ const ComponentLayout = () => {
           onChange={(e) => setInput(e.target.value)}
           placeholder="Paste your long text here..."
         />
-        <button
-          className="w-1/4 bg-blue-500 text-white px-4 py-2 rounded"
-          onClick={handleGenerate}
-          disabled={loading}
-        >
-          {loading ? 'Summarizing...' : 'Summarize'}
-        </button>
+      
 
         <div className="mt-4">
           <h2 className="font-semibold">Summary:</h2>
           <p>{output}</p>
         </div>
-
+<div className="flex mt-5 gap-5 ">
+    <button
+          className="w-1/4 bg-blue-500 text-white rounded cursor-pointer"
+          onClick={handleGenerate}
+          disabled={loading || input.trim()===""}
+        >
+          {loading ? 'Summarizing' : 'Summarize'}
+        </button>
         <button
-          className="w-1/4 mt-4 bg-blue-500 text-white px-4 py-2 rounded"
+          className="w-1/4 bg-blue-500 text-white px-4 py-2 rounded"
           onClick={handleClear}
           disabled={loading}
         >
           Clear
         </button>
+</div>
       </div>
     </>
   );
